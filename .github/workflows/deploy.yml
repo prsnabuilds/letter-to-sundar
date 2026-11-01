@@ -1,0 +1,49 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      PROJECT: letter-to-sundar
+    steps:
+      - name: Check for Cloudflare token
+        id: token
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::warning::Add the CLOUDFLARE_API_TOKEN repository secret, then re-run this workflow."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.token.outputs.ok == 'true'
+
+      - name: Resolve Cloudflare account
+        if: steps.token.outputs.ok == 'true'
+        run: |
+          ACCOUNT_ID=$(curl -fsS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            https://api.cloudflare.com/client/v4/accounts | jq -r '.result[0].id')
+          test -n "$ACCOUNT_ID" && test "$ACCOUNT_ID" != "null"
+          echo "CLOUDFLARE_ACCOUNT_ID=$ACCOUNT_ID" >> "$GITHUB_ENV"
+
+      - name: Create Pages project if missing
+        if: steps.token.outputs.ok == 'true'
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/$PROJECT")
+          if [ "$code" != "200" ]; then
+            curl -fsS -X POST -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json" \
+              "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects" \
+              --data "{\"name\":\"$PROJECT\",\"production_branch\":\"main\"}" | jq '.success, .errors, .result.subdomain'
+          fi
+
+      - name: Deploy
+        if: steps.token.outputs.ok == 'true'
+        run: npx --yes wrangler@3 pages deploy site --project-name "$PROJECT" --branch main --commit-dirty=true
