@@ -42,7 +42,7 @@ body {
 .stage { position: fixed; inset: 0; overflow: hidden; }
 .bg { position: absolute; inset: 0; background: var(--blue) url("assets/bg.webp") center / cover no-repeat; }
 .spot, .vignette { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
-.spot { background: radial-gradient(60% 55% at 50% 52%, rgba(120,170,255,.35), rgba(120,170,255,0) 70%); mix-blend-mode: screen; }
+.spot { background: radial-gradient(60% 55% at 50% 52%, rgba(150,190,255,.2), rgba(150,190,255,0) 70%); }
 .vignette { background: radial-gradient(120% 90% at 50% 50%, rgba(0,0,0,0) 45%, rgba(2,10,50,.55) 100%); }
 
 /* ---------- Scene 1: title, rebuilt from the Figma frame (2000x1333) ---------- */
@@ -50,7 +50,7 @@ body {
   position: absolute; left: 50%; top: 50%;
   width: min(47.6vw, 1180px); aspect-ratio: 952 / 269;
   transform: translate(-53.2%, -47.8%);
-  will-change: transform, opacity, filter;
+  will-change: transform, opacity;
 }
 .title-group > .piece { position: absolute; will-change: transform; }
 .piece img { display: block; width: 100%; height: auto; max-width: none; }
@@ -111,11 +111,11 @@ body {
 .pocket .gloss {
   position: absolute; inset: 0; pointer-events: none;
   clip-path: polygon(0 0, 50% 52.8%, 100% 0, 100% 100%, 0 100%);
-  background:
-    linear-gradient(105deg, rgba(255,255,255,0) 38%, rgba(255,255,255,.55) 50%, rgba(255,255,255,0) 62%) var(--sheen, 120%) 0 / 300% 100% no-repeat,
-    var(--noise);
-  mix-blend-mode: soft-light;
+  background: var(--noise); overflow: hidden;
 }
+.band { position: absolute; top: 0; bottom: 0; left: 0; width: 45%; pointer-events: none; will-change: transform;
+  background: linear-gradient(105deg, rgba(255,255,255,0) 15%, rgba(255,255,255,.3) 50%, rgba(255,255,255,0) 85%); }
+.letter .band { background: linear-gradient(115deg, rgba(255,255,255,0) 15%, rgba(255,255,255,.35) 50%, rgba(255,255,255,0) 85%); }
 .pocket .shade, .flap .shade { position: absolute; inset: 0; pointer-events: none; background: #0a0f2a; opacity: 0; }
 .pocket .shade { clip-path: polygon(0 0, 50% 52.8%, 100% 0, 100% 100%, 0 100%); }
 .hinge { filter: drop-shadow(0 3px 3px rgba(60,40,15,.28)); }
@@ -138,7 +138,7 @@ body {
 /* ---------- Scene 3: the letter ---------- */
 .letter {
   position: absolute; left: 0; top: 0; width: var(--WL); height: 200px;
-  transform-origin: 50% 0; opacity: 0; will-change: transform, height;
+  transform-origin: 50% 0; opacity: 0; will-change: transform;
   border-radius: 2px; overflow: hidden;
   background:
     linear-gradient(180deg, rgba(0,0,0,0) calc(var(--HL) * .3333 - 10px), rgba(80,60,30,.07) calc(var(--HL) * .3333 - 1px), rgba(255,255,255,.7) calc(var(--HL) * .3333), rgba(0,0,0,0) calc(var(--HL) * .3333 + 10px)),
@@ -146,11 +146,10 @@ body {
     var(--noise),
     repeating-linear-gradient(90deg, rgba(120,100,60,.025) 0 1px, rgba(0,0,0,0) 1px 5px),
     var(--paper);
-  box-shadow:
-    0 1px 1px rgba(0,0,0,.08),
-    0 calc(4px + 26px * var(--lift, 0)) calc(10px + 50px * var(--lift, 0)) rgba(1,10,60, calc(.25 + .2 * var(--lift, 0)));
+  box-shadow: 0 1px 2px rgba(0,0,0,.12), 0 4px 10px rgba(1,10,60,.18);
 }
-.letter .glare { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(115deg, rgba(255,255,255,0) 30%, rgba(255,255,255,.45) 48%, rgba(255,255,255,0) 66%) var(--lsheen, 100%) 0 / 300% 100% no-repeat; mix-blend-mode: soft-light; }
+.letter-shadow { position: absolute; left: 0; top: 0; width: var(--WL); height: var(--HL); transform-origin: 50% 0; opacity: 0;
+  background: rgba(1,10,60,.5); border-radius: 12px; filter: blur(28px); will-change: transform, opacity; pointer-events: none; }
 .letter .view {
   position: absolute; inset: var(--pad) var(--pad) calc(var(--pad) * .6);
   overflow: hidden;
@@ -158,14 +157,7 @@ body {
           mask-image: linear-gradient(180deg, transparent 0, #000 var(--ft, 0px), #000 calc(100% - var(--fb, 0px)), transparent 100%);
 }
 .content { will-change: transform; max-width: 62ch; margin-inline: auto; }
-.slate {
-  display: grid; grid-template-columns: 1.6fr 1fr 1fr; border-top: 1px solid rgba(20,44,122,.35);
-  font: 500 10px/1.2 var(--f-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft);
-}
-.slate div { padding: 9px 10px 10px 0; border-bottom: 1px solid rgba(20,44,122,.35); display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.slate div + div { padding-left: 10px; border-left: 1px solid rgba(20,44,122,.35); }
-.slate b { font: 400 15px/1.15 var(--f-body); font-style: italic; letter-spacing: 0; text-transform: none; color: var(--ink); }
-.salute { font: 400 clamp(40px, 7vw, 58px)/1.1 var(--f-script); color: var(--ink); margin: 34px 0 10px; }
+.salute { font: 400 clamp(40px, 7vw, 58px)/1.1 var(--f-script); color: var(--ink); margin: 4px 0 10px; }
 .content p { font: 400 clamp(17px, 2.2vw, 19px)/1.7 var(--f-body); font-optical-sizing: auto; color: #1C2650; margin: 0 0 1.05em; text-wrap: pretty; }
 .signoff { margin-top: 30px; font: italic 400 18px/1.4 var(--f-body); color: #1C2650; }
 .sign { font: 400 clamp(38px, 6vw, 50px)/1 var(--f-script); color: var(--ink); margin-top: 6px; transform: rotate(-3deg); transform-origin: left; }
@@ -174,10 +166,13 @@ body {
 .endcard span { min-width: 0; }
 
 @media (max-width: 700px) {
-  .title-group { width: 92vw; }
-  .slate { grid-template-columns: 1fr 1fr; }
-  .slate div:nth-child(3) { border-left: 0; padding-left: 0; }
+  .title-group { width: 76vw; }
 }
+@media (hover: none) {
+  .hinge { filter: none; }
+  .p-clap img, .p-pen img, .p-rose img { filter: none; }
+}
+.title-group.gone *, .hint.gone, .hint.gone i { animation-play-state: paused !important; }
 @media (prefers-reduced-motion: reduce) {
   .title-group *, .hint, .hint i, .sheen { animation: none !important; }
 }
@@ -205,17 +200,12 @@ body {
     <div class="env-shadow" id="eShadow"></div>
     <div class="part env-back" id="eBack" style="z-index:2"></div>
 
+    <div class="letter-shadow" id="lShadow"></div>
     <article class="letter" id="letter" style="z-index:3">
-      <div class="glare"></div>
+      <div class="band" id="lBand"></div>
       <div class="view" id="view">
         <div class="content" id="content">
           <!-- ============ LETTER CONTENT: edit freely below ============ -->
-          <div class="slate">
-            <div>Production<b>Sundar, another year</b></div>
-            <div>Scene<b>The letter</b></div>
-            <div>Take<b>One</b></div>
-          </div>
-
           <div class="salute">Dear Sundar,</div>
 
           <p>Happy birthday. Before anything else, I wanted you to have something that isn’t a forwarded message or a sticker in a group chat. So here is a letter, written slowly, the way letters used to be.</p>
@@ -247,7 +237,7 @@ body {
         <path d="M0 625 L472 290 Q500 270 528 290 L1000 625 Z" fill="url(#gB)" filter="url(#fs)"/>
         <path d="M0 625 L472 290 Q500 270 528 290 L1000 625" fill="none" stroke="rgba(255,255,255,.65)" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
       </svg>
-      <div class="gloss" id="pGloss"></div>
+      <div class="gloss"><div class="band" id="pBand"></div></div>
       <div class="shade" id="pShade"></div>
     </div>
 
@@ -268,6 +258,7 @@ body {
 (() => {
   const $ = id => document.getElementById(id);
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const touch = matchMedia('(hover: none)').matches;
   const root = document.documentElement;
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
@@ -299,7 +290,7 @@ body {
     shadow: $('eShadow'), back: $('eBack'), pocket: $('ePocket'), hinge: $('eHinge'), sealW: $('eSeal'),
     flap: $('flap'), fShade: $('fShade'), pShade: $('pShade'),
     sealL: $('sealL'), sealR: $('sealR'),
-    letter: $('letter'), view: $('view'), content: $('content')
+    letter: $('letter'), lShadow: $('lShadow'), lBand: $('lBand'), pBand: $('pBand'), view: $('view'), content: $('content')
   };
 
   const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
@@ -342,11 +333,14 @@ body {
   function render(y) {
     /* --- title out --- */
     const pT = easeIO(prog(y, seg.title));
-    const blur = reduce ? 0 : pT * 10;
+    const blur = (reduce || touch) ? 0 : pT * 10;
     el.tg.style.opacity = 1 - pT;
     el.tg.style.filter = blur > .05 ? `blur(${blur}px)` : 'none';
     el.tg.style.transform = `translate(-53.2%, -47.8%) translateY(${-pT * 60}px) scale(${1 - pT * .06})`;
-    el.tg.style.visibility = pT >= 1 ? 'hidden' : 'visible';
+    const gone = pT >= 1;
+    el.tg.style.visibility = gone ? 'hidden' : 'visible';
+    el.tg.classList.toggle('gone', gone);
+    el.hint.classList.toggle('gone', y > H * .2);
     const px = ctx, py = cty;
     el.pTitle.style.transform = `translate(${px * 4}px, ${py * 3}px)`;
     el.pClap.style.transform = `translate(${-pT * 140 + px * 12}px, ${-pT * 30 + py * 9}px) rotate(${-pT * 22}deg)`;
@@ -374,7 +368,7 @@ body {
     const envOp = Math.min(1, pE * 1.8) * (1 - clamp01(pO * 1.3));
     const T = `translate3d(${cx - envW / 2}px, ${envCy - envH / 2}px, 0) perspective(1600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(${envS})`;
     for (const p of [el.back, el.pocket, el.hinge, el.sealW]) { p.style.transform = T; p.style.opacity = envOp; }
-    el.pocket.style.setProperty('--sheen', (125 - e * 95 - pF * 20 + ctx * 18) + '%');
+    el.pBand.style.transform = `translate3d(${lerp(240, -110, clamp01(e * .8 + pF * .2 - ctx * .15))}%, 0, 0)`;
     el.pShade.style.opacity = (1 - e) * .28 + pO * .25;
 
     /* contact shadow: wide and faint while the envelope is "in the air", tight when it lands */
@@ -408,21 +402,24 @@ body {
     }
     const lrx = -Math.sin(pO * Math.PI) * 9 - cty * 4 * (1 - pO * .7);
     const lry = ctx * 5 * (1 - pO * .7);
-    el.letter.style.height = h + 'px';
+    el.letter.style.height = Math.round(h) + 'px';
     el.letter.style.transform = `translate3d(${cx - WL / 2}px, ${top}px, 0) perspective(1800px) rotateX(${lrx}deg) rotateY(${lry}deg) scale(${s})`;
     el.letter.style.opacity = pF > .25 ? 1 : 0;
     el.letter.style.zIndex = pR >= .999 ? 7 : 3;
-    el.letter.style.setProperty('--lift', (Math.sin(pO * Math.PI) * .9 + (pO >= 1 ? .35 : pO * .35)).toFixed(3));
-    el.letter.style.setProperty('--lsheen', (110 - pO * 80 - pRead * 30 + ctx * 15) + '%');
+    const lift = Math.sin(pO * Math.PI) * .6 + pO * .4;
+    el.lShadow.style.transform = `translate3d(${cx - WL / 2}px, ${top + 10 + lift * 24}px, 0) perspective(1800px) rotateX(${lrx}deg) rotateY(${lry}deg) scale(${s * (.96 + lift * .04)}, ${s * h / HL})`;
+    el.lShadow.style.opacity = pR >= .999 ? (.35 + lift * .4) : 0;
+    el.lShadow.style.zIndex = pR >= .999 ? 6 : 0;
+    el.lBand.style.transform = `translate3d(${lerp(240, -110, clamp01(pO * .7 + pRead * .3 - ctx * .1))}%, 0, 0)`;
 
     const off = pRead * overflow;
     el.content.style.transform = `translate3d(0, ${-off}px, 0)`;
-    el.view.style.setProperty('--ft', Math.min(1, off / 30) * 34 + 'px');
+    el.view.style.setProperty('--ft', (off > 4 ? 34 : 0) + 'px');
     el.view.style.setProperty('--fb', (overflow - off > 2 ? 46 : 0) + 'px');
   }
 
   function tick() {
-    const k = reduce ? 1 : .14;
+    const k = reduce ? 1 : touch ? .24 : .14;
     const d = target - cur;
     cur = Math.abs(d) < .3 ? target : cur + d * k;
     const dx = tx - ctx, dy = ty - cty;
@@ -437,7 +434,10 @@ body {
     tx = ev.clientX / W * 2 - 1; ty = ev.clientY / H * 2 - 1;
   }, { passive: true });
   let rt;
-  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { layout(); target = scrollY; dirty = true; }, 80); });
+  let lastW = innerWidth;
+  addEventListener('resize', () => {
+    if (touch && innerWidth === lastW) return; /* ignore mobile address-bar show/hide */
+    lastW = innerWidth; clearTimeout(rt); rt = setTimeout(() => { layout(); target = scrollY; dirty = true; }, 80); });
 
   layout();
   document.fonts && document.fonts.ready.then(() => { layout(); dirty = true; });
